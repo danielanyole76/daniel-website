@@ -43,6 +43,25 @@ skips the POST while it is unset, so the page is fully functional without it.
 Filling in a real Google Apps Script Web App URL makes registration attempts
 forward to the user's sheet. It is a public endpoint, not a secret.
 
+## Quirks of the exported source file
+
+`index.html` came out of `Daniel_Website.zip` with three defects that return if the
+zip is ever re-extracted:
+
+- the doctype had lost its leading `<`, so browsers rendered in quirks mode;
+- the cybersecurity-portal `<style>` block had lost its opening tag, which left the
+  whole portal stylesheet inert *and* rendered it as text on the page (every wizard
+  step visible at once, portal unstyled);
+- the portal `<script>` block was duplicated verbatim (310 lines). The second copy
+  never executed — the browser rejects the redeclared `userData` with a SyntaxError —
+  so it was deleted. Do not add it back: were both copies to run, every
+  `DOMContentLoaded` handler would register twice.
+
+One harmless console error remains, deliberately not touched: the profile-pass image
+(`#pass-avatar`) carries `src=""`, so the browser tries to load the page URL itself as
+an image and logs a failure. The script always sets a real value before that card is
+shown, so nothing is visibly broken.
+
 ## Verifying a change
 
 ```
